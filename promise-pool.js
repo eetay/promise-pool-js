@@ -9,7 +9,7 @@ function promisePool({max_parallel, next_promise, next_promise_data}) {
     function startNext(self) {
       var init = {index: self.so_far, data: self.next_promise_data}
       var next = next_promise({index: self.so_far, data: self.next_promise_data})
-      self.so_far = self.so_far + 1
+      self.so_far += 1
       if (next === null) {
         resolve(self.results)
       } else {
@@ -25,7 +25,7 @@ function promisePool({max_parallel, next_promise, next_promise_data}) {
         })
       }
     }
-    for (i=0; i<self.max; i=i+1) {
+    for (var i=0; i<self.max; i+=1) {
       startNext(self)
     }
   })
