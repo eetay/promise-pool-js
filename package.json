@@ -3,7 +3,7 @@
   "version": "0.2.1",
   "description": "Tiny library for performing promises in parallel while limiting the maximum number of parallel promises",
   "main": "promise-pool.js",
-  "repository": "git@github.com:eetay/promise-pool.git",
+  "repository": "git@github.com:eetay/promise-pool-js.git",
   "author": "Eetay Natan <eetay.natan@samanage.com>",
   "license": "MIT",
   "keywords": [
@@ -27,7 +27,7 @@
     "node"
   ],
   "dependencies": {},
-  "homepage": "https://github.com/eetay/promise-pool/blob/master/README.md",
+  "homepage": "https://github.com/eetay/promise-pool-js/blob/master/README.md",
   "devDependencies": {
     "eslint": "4.15.0",
     "eslint-plugin-jest": "21.17.0",
@@ -36,7 +36,7 @@
     "jest": "23.2.0"
   },
   "bugs": {
-    "url": "https://github.com:eetay/promise-pool/issues"
+    "url": "https://github.com:eetay/promise-pool-js/issues"
   },
   "scripts": {
     "test": "jest --detectOpenHandles"
