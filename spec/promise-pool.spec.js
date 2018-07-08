@@ -1,7 +1,4 @@
 jest.setTimeout(120000)
-function log() {
-  //console.log('DEBUG', ...arguments)
-}
 process.on('unhandledRejection', function(error, promise) {
     console.error('UNHANDLED REJECTION - Promise: ', promise, ', Error: ', error, ').');
 })
@@ -14,7 +11,7 @@ test('20 promises; max parallel 3', () => {
     max_parallel: 3,
     next_promise: function ({index, data}) {
       if (index>=20) return null
-      return new Promise(function(res, rej) {
+      return new Promise(function(res, _rej) {
         res(index*2 + data)
       })
     }
