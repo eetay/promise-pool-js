@@ -12,7 +12,7 @@ test('20 promises; max parallel 3', () => {
     next_promise: function ({index, data}) {
       if (index>=20) return null
       return new Promise(function(res, _rej) {
-        res(index*2 + data)
+        res((index * 2) + data)
       })
     }
   })
