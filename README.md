@@ -1,4 +1,4 @@
-# promise-pool-js
+# Tiny Promise Pool
 Library to execute promises in parallel, keeping not to execute more than N promises at any one time
 
 ### Install:
