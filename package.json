@@ -1,6 +1,6 @@
 {
   "name": "tiny-promise-pool",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Tiny library for performing promises in parallel while limiting the maximum number of parallel promises",
   "main": "promise-pool.js",
   "repository": "git@github.com:eetay/promise-pool-js.git",
