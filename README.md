@@ -5,7 +5,7 @@ Library to execute promises in parallel, keeping not to execute more than N prom
 ### Install:
 
   ```bash
-  npm i promise-pool
+  npm i tiny-promise-pool
   ```
 
 ### Use:
