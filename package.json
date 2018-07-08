@@ -1,6 +1,6 @@
 {
   "name": "promise-pool",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Library for performing promises in parallel while limiting the maximum number of parallel promises",
   "main": "promise-pool.js",
   "repository": "git@github.com:eetay/promise-pool.git",
@@ -10,8 +10,7 @@
     "promise",
     "promises"
   ],
-  "dependencies": {
-  },
+  "dependencies": {},
   "homepage": "https://github.com/eetay/promise-pool/blob/master/README.md",
   "devDependencies": {
     "eslint": "4.15.0",
