@@ -1,9 +1,17 @@
 # promise-pool-js
 Library to execute promises in parallel, keeping not to execute more than N promises at any one time
 
+### Install:
+
+  ```bash
+  npm i promise-pool
+  ```
+
 ### Use:
 
 ```javascript
+  var promisePool = require('promise-pool')
+
   function nextPromise({index, data}) {
     if (index>=20) return null // no more
     return new Promise(function(res, rej) {
