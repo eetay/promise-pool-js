@@ -1,6 +1,8 @@
 # promise-pool-js
 Library to execute promises in parallel, keeping not to execute more than N promises at any one time
 
+### Use:
+
 ```javascript
   function nextPromise({index, data}) {
     if (index>=20) return null // no more
@@ -10,15 +12,17 @@ Library to execute promises in parallel, keeping not to execute more than N prom
   }
 
   var all = promisePool({
-    next_promise_data: 17,
-    max_parallel: 3,
-    next_promise: nextPromise
+    max_parallel: 3,            // maximum parallel promises to execute at one time
+    next_promise: nextPromise,  // function to get/generate next promise
+    next_promise_data: 17       // user data for the next_promise function
   })
 
   all.then(function(result) {
-    console.dir(result)
+    console.dir(result)         // after all promises are resolves/rejected
   })
 ```
+
+### Result:
 
 ```javascript
     [ { init: { index: 0, data: 17 }, promise: Promise { 17 }, result: 17 },
