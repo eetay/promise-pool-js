@@ -1,9 +1,10 @@
 var promisePool = require('../promise-pool.js')
 
-test('Array of promises', () => {
+test('Array of promises', (done) => {
+  expect.assertions(1)
   function makePromise(i) {
     return new Promise(function (resolve, _reject) {
-      resolve(i)
+      setTimeout(() => resolve(i), 0)
     })
   }
   const promiseList = [
@@ -17,17 +18,22 @@ test('Array of promises', () => {
   })
   pool.then(function(result) {
     expect(result.length).toBe(promiseList.length)
+    done()
   })
 })
 
-test('20 promises; max parallel 3', () => {
+test('20 promises; max parallel 3', (done) => {
+  expect.assertions(2)
   const numPromises = 20
+  function randomTimeout() {
+    return Math.floor((Math.random() * 100) + 1)
+  }
   const pool = promisePool({
     max_parallel: 3,
     next_promise: function ({index, data}) {
       if (index>=numPromises) return null
       return new Promise(function(resolve, _reject) {
-        resolve((index * 2) + data)
+        setTimeout(() => resolve((index * 2) + data), randomTimeout())
       })
     },
     next_promise_data: 17
@@ -48,5 +54,6 @@ test('20 promises; max parallel 3', () => {
         expect.objectContaining({ context: expect.objectContaining({ index: 9, data: 17 }), result: 35 })
       ])
     )
+    done()
   })
 })

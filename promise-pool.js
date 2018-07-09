@@ -27,9 +27,13 @@ function promisePool({max_parallel, next_promise, next_promise_data, threads}) {
           startNext(self, thread)
         })
       } else {
-        resolve(self.results)
+        self.live -= 1
+        if (self.live <= 0) {
+          resolve(self.results)
+        }
       }
     }
+    self.live = self.max
     for (var i=0; i<self.max; i+=1) {
       startNext(self, i)
     }
