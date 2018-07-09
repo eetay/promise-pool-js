@@ -6,7 +6,7 @@ function randomTimeout() {
 }
 
 function makePromise(i, timeout = 0) {
-  closure = function () {
+  const closure = function () {
     var context = {}
     var promise = new Promise(function (resolve, _reject) {
       setTimeout(() => {
