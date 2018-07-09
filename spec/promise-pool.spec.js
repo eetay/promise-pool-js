@@ -1,20 +1,40 @@
 var promisePool = require('../promise-pool.js')
 
+test('Array of promises', () => {
+  function makePromise(i) {
+    return new Promise(function (resolve, _reject) {
+      resolve(i)
+    })
+  }
+  const promiseList = [
+    makePromise(0),
+    makePromise(1)
+  ]
+  const pool = promisePool({
+    threads: 3,
+    next_promise: promiseList,
+    next_promise_data: 'data for context'
+  })
+  pool.then(function(result) {
+    expect(result.length).toBe(promiseList.length)
+  })
+})
+
 test('20 promises; max parallel 3', () => {
-  //expect.assertions(1)
-  var p = promisePool({
-    next_promise_data: 17,
+  const numPromises = 20
+  const pool = promisePool({
     max_parallel: 3,
     next_promise: function ({index, data}) {
-      if (index>=20) return null
-      return new Promise(function(res, _rej) {
-        res((index * 2) + data)
+      if (index>=numPromises) return null
+      return new Promise(function(resolve, _reject) {
+        resolve((index * 2) + data)
       })
-    }
+    },
+    next_promise_data: 17
   })
-  p.then(function(res) {
-    expect(res.length).toBe(20)
-    expect(res).toEqual(
+  pool.then(function(result) {
+    expect(result.length).toBe(numPromises)
+    expect(result).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ context: expect.objectContaining({ index: 0, data: 17 }), result: 17 }),
         expect.objectContaining({ context: expect.objectContaining({ index: 1, data: 17 }), result: 19 }),

@@ -1,22 +1,21 @@
-function promisePool({max_parallel, next_promise, next_promise_data}) {
+function promisePool({max_parallel, next_promise, next_promise_data, threads}) {
   var grand_promise = new Promise(function(resolve, _reject) {
-    var self = this
-    self.max = max_parallel
+    const self = this
+    self.max = max_parallel || threads
     self.so_far = 0
     self.incomplete = 0
+    self.next_promise = Array.isArray(next_promise) ? [...next_promise] : next_promise
     self.next_promise_data = next_promise_data
     self.results = []
     function startNext(self, thread) {
-      var context = {
+      const context = {
         index: self.so_far,
         thread,
         data: self.next_promise_data
       }
-      var next = next_promise({ index: self.so_far, data: self.next_promise_data })
+      const next = Array.isArray(self.next_promise) ? self.next_promise.pop() : self.next_promise({ index: self.so_far, data: self.next_promise_data })
       self.so_far += 1
-      if (next === null) {
-        resolve(self.results)
-      } else {
+      if (next && next.then) {
         //console.log('promise ' + JSON.stringify(context))
         next.then(function(result) {
           //console.log('promise resolved')
@@ -27,6 +26,8 @@ function promisePool({max_parallel, next_promise, next_promise_data}) {
           self.results.push({ context, promise: next, error: err })
           startNext(self, thread)
         })
+      } else {
+        resolve(self.results)
       }
     }
     for (var i=0; i<self.max; i+=1) {

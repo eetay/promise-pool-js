@@ -11,7 +11,7 @@ Tiny promise pool's code is reviewed by [![Codacy Badge](https://api.codacy.com/
   npm i tiny-promise-pool
   ```
 
-### Use:
+### Use with creator function:
 
 ```javascript
   var promisePool = require('promise-pool')
@@ -24,7 +24,7 @@ Tiny promise pool's code is reviewed by [![Codacy Badge](https://api.codacy.com/
   }
 
   var all = promisePool({
-    max_parallel: 3,            // maximum parallel promises to execute at one time
+    threads: 3,                 // maximum parallel promises to execute at one time
     next_promise: nextPromise,  // function to get/generate next promise
     next_promise_data: 17       // user data for the next_promise function
   })
@@ -57,4 +57,26 @@ Tiny promise pool's code is reviewed by [![Codacy Badge](https://api.codacy.com/
       { context: { index: 17, thread: 2, data: 17 }, promise: Promise { 51 }, result: 51 },
       { context: { index: 18, thread: 0, data: 17 }, promise: Promise { 53 }, result: 53 },
       { context: { index: 19, thread: 1, data: 17 }, promise: Promise { 55 }, result: 55 } ]
+```
+
+### Use with array of promises:
+
+```javascript
+  function makePromise(i) {
+    return new Promise(function (resolve, _reject) {
+      resolve(i)
+    })
+  }
+  const promiseList = [
+    makePromise(0),
+    makePromise(1)
+  ]
+  const pool = promisePool({
+    threads: 3,
+    next_promise: promiseList,              // List of promises to resolve
+    next_promise_data: 'data for context'
+  })
+  pool.then(function(result) {
+    ...
+  })
 ```
