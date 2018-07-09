@@ -3,7 +3,8 @@ A tiny library to execute multiple promises in parallel,
 keeping not to execute more than N promises at any one time,
 using a promise.
 
-Tiny promise pool's code is reviewed by [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6ba3a2ddf94b42a1b28de6020117b33d)](https://www.codacy.com/app/eetay/promise-pool-js?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=eetay/promise-pool-js&amp;utm_campaign=Badge_Grade)
+Tiny Promise Pool is reviewed by [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6ba3a2ddf94b42a1b28de6020117b33d)](https://www.codacy.com/app/eetay/promise-pool-js?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=eetay/promise-pool-js&amp;utm_campaign=Badge_Grade)
+Tiny promise Pool is unit tested with ![Jest](https://github.com/eetay/promise-pool-js/blob/master/spec/jest.png)
 
 ### Install:
 
