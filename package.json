@@ -7,6 +7,8 @@
   "author": "Eetay Natan <eetay.natan@samanage.com>",
   "license": "MIT",
   "keywords": [
+    "small",
+    "tiny",
     "promise",
     "promises",
     "promises-a",
@@ -32,6 +34,7 @@
     "eslint": "4.15.0",
     "eslint-plugin-jest": "21.17.0",
     "eslint-plugin-react": "7.10.0",
+    "eslint-plugin-security": "1.4.0",
     "global": "4.3.2",
     "jest": "23.2.0"
   },
