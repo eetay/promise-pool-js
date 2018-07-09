@@ -1,12 +1,28 @@
+jest.setTimeout(20000)
 var promisePool = require('../promise-pool.js')
+
+function randomTimeout() {
+  return Math.floor((Math.random() * 100) + 1)
+}
+
+function makePromise(i, timeout = 0) {
+  closure = function () {
+    var context = {}
+    var promise = new Promise(function (resolve, _reject) {
+      setTimeout(() => {
+        context.promise.done = true
+        resolve(i)
+      }, timeout)
+    })
+    context.promise = promise
+    context.promise.done = false
+    return promise
+  }
+  return closure()
+}
 
 test('Array of promises', (done) => {
   expect.assertions(1)
-  function makePromise(i) {
-    return new Promise(function (resolve, _reject) {
-      setTimeout(() => resolve(i), 0)
-    })
-  }
   const promiseList = [
     makePromise(0),
     makePromise(1)
@@ -22,19 +38,44 @@ test('Array of promises', (done) => {
   })
 })
 
+test('Array of promises; one is not resolved', (done) => {
+  expect.assertions(6)
+  var resolved=false
+  const promiseList = [
+    makePromise(0, 100),
+    makePromise(1, 10000),
+    makePromise(2, 10),
+    makePromise(3, 10)
+  ]
+  const pool = promisePool({
+    threads: 2,
+    next_promise: promiseList,
+    next_promise_data: 'data for context'
+  })
+  setTimeout(()=>{
+    expect(promiseList[0].done).toBe(true)
+    expect(promiseList[1].done).toBe(false)
+    expect(promiseList[2].done).toBe(true)
+    expect(promiseList[3].done).toBe(true)
+  }, 1000)
+  setTimeout(()=>{
+    expect(resolved).toBe(false)
+  }, 9900)
+  pool.then(function(result) {
+    resolved=true
+    expect(result.length).toBe(promiseList.length)
+    done()
+  })
+})
+
 test('20 promises; max parallel 3', (done) => {
   expect.assertions(2)
   const numPromises = 20
-  function randomTimeout() {
-    return Math.floor((Math.random() * 100) + 1)
-  }
   const pool = promisePool({
     max_parallel: 3,
     next_promise: function ({index, data}) {
       if (index>=numPromises) return null
-      return new Promise(function(resolve, _reject) {
-        setTimeout(() => resolve((index * 2) + data), randomTimeout())
-      })
+      return makePromise((index * 2) + data, randomTimeout())
     },
     next_promise_data: 17
   })
