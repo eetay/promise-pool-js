@@ -21,6 +21,44 @@ function makePromise(i, timeout = 0) {
   return closure()
 }
 
+
+
+test('Nested promise pools', (done) => {
+  expect.assertions(3)
+  const secondaryPromiseList = [
+    makePromise(2),
+    makePromise(3),
+    makePromise(4),
+    makePromise(5)
+  ]
+  const secondaryData = 'secondary promise pool'
+  const primaryPromiseList = [
+    makePromise(0),
+    makePromise(1),
+    promisePool({
+      threads: 2,
+      next_promise: secondaryPromiseList,
+      next_promise_data: secondaryData
+    })
+  ]
+  const pool = promisePool({
+    threads: 3,
+    next_promise: primaryPromiseList,
+    next_promise_data: 'primary promise pool'
+  })
+  pool.then(function(result) {
+    expect(result.length).toBe(primaryPromiseList.length)
+    const secondaryResult = result[2].result
+    expect(secondaryResult.length).toBe(secondaryPromiseList.length)
+    var secondaryDataResults=[]
+    secondaryResult.forEach(function () {
+      secondaryDataResults.push(secondaryData)
+    })
+    expect(secondaryResult.map(x => x.context.data)).toEqual(secondaryDataResults)
+    done()
+  })
+})
+
 test('Array of promises', (done) => {
   expect.assertions(1)
   const promiseList = [
