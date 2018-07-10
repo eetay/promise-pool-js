@@ -1,11 +1,11 @@
-function promisePool({max_parallel, next_promise, next_promise_data, threads, promises, user_data}) {
+function promisePool({max_parallel, next_promise, next_promise_data, threads, promises, context_data}) {
   var promises_generator = promises || next_promise
   var self = {
     threads: max_parallel || threads,
     started: 0,
     ended: 0,
     promises_generator: Array.isArray(promises_generator) ? [...promises_generator] : promises_generator,
-    next_promise_data: next_promise_data || user_data,
+    next_promise_data: next_promise_data || context_data,
     results: []
   }
   self.live = self.threads
@@ -17,7 +17,7 @@ function promisePool({max_parallel, next_promise, next_promise_data, threads, pr
         data: self.next_promise_data,
         ended: false
       }
-      const next = Array.isArray(self.promises_generator) ? self.promises_generator.shift() : self.promises_generator({ index: self.started, data: self.next_promise_data })
+      const next = promises_generator.next ? promises_generator.next().value : (Array.isArray(self.promises_generator) ? self.promises_generator.shift() : self.promises_generator({ index: self.started, data: self.next_promise_data }))
       self.started += 1
       if (next && next.then) {
         //console.log('promise ' + JSON.stringify(context))

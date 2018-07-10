@@ -54,11 +54,31 @@ test('Nested promise pools', (done) => {
   })
 })
 
-test('Array of promises', (done) => {
-  expect.assertions(1)
+test('Generator functions', (done) => {
+  expect.assertions(2)
+  var total = 10
+  function *createPromiseMaker() {
+    for (var i=0; i<total; i+=1) {
+      yield makePromise(i, randomTimeout())
+    }
+  }
+  const pool = promisePool({
+    threads: 3,
+    promises: createPromiseMaker()
+  })
+  pool.then(function(result) {
+    expect(result.length).toBe(total)
+    expect(result[2].result).toEqual(2)
+    done()
+  })
+})
+
+
+test('Array of promises & order of execution', (done) => {
+  expect.assertions(3)
   const promiseList = [
-    makePromise(0),
-    makePromise(1)
+    makePromise(0,20),
+    makePromise(1,10)
   ]
   const pool = promisePool({
     threads: 3,
@@ -67,6 +87,8 @@ test('Array of promises', (done) => {
   })
   pool.then(function(result) {
     expect(result.length).toBe(promiseList.length)
+    expect(result[1].result).toBe(1)
+    expect(result[1].context.ended).toBe(0) // first to finish
     done()
   })
 })

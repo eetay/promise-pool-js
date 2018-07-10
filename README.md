@@ -26,8 +26,8 @@ function nextPromise({index, data}) {
 
 var all = promisePool({
   threads: 3,                 // maximum parallel promises
-  next_promise: nextPromise,  // function to get/generate next promise
-  next_promise_data: 17       // user data for the next_promise function
+  promises: nextPromise,  // function to get/generate next promise
+  context_data: 17       // user data for the next_promise function
 })
 
 all.then(function(result) {
@@ -78,10 +78,25 @@ const promiseList = [
 
 promisePool({
   threads: 3,
-  next_promise: promiseList,              // List of promises
-  next_promise_data: 'data for context'
+  promises: promiseList,              // List of promises
+  context_data: 'data for context'
 }).then(function(result) {
   ...
+})
+```
+
+## Using generator to generate promises:
+
+```javascript
+function *createPromiseMaker() {
+  for (var i=0; i<10; i+=1) {
+    yield new Promise(...)
+  }
+}
+
+const pool = promisePool({
+  threads: 3,
+  promises: createPromiseMaker()
 })
 ```
 
@@ -90,22 +105,22 @@ promisePool({
 ```javascript
 const innerPool = promisePool({
   threads: 2,
-  next_promise: [
+  promises: [
     makePromise(2),
     makePromise(3),
     makePromise(4),
     makePromise(5)
   ],
-  next_promise_data: 'secondary promise pool'
+  context_data: 'secondary promise pool'
 })
 const pool = promisePool({
   threads: 3,
-  next_promise: [
+  promises: [
     makePromise(0),
     makePromise(1),
     innerPool
   ],
-  next_promise_data: 'primary promise pool'
+  context_data: 'primary promise pool'
 })
 pool.then(function(result) {
   ...
@@ -118,4 +133,12 @@ pool.then(function(result) {
   - reject as soon as one is rejected (same as Promise.all)
   - wait for all to resolve even if some are rejected (same as Promise.when)
 - support listeners for individual promise completions/rejections
+
+## migration from previous versions:
+the following option keys are renamed:
+1. next_promise_data -> context_data
+2. next_promise -> promises
+2. max_parallel -> threads
+
+you can still use the older option keys, but they are deprecated
 
