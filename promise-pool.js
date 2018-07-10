@@ -14,17 +14,17 @@ function promisePool(options) {
           thread,
           data: self.next_promise_data
         }
-        const next = Array.isArray(self.next_promise) ? self.next_promise.pop() : self.next_promise({ index: self.so_far, data: self.next_promise_data })
+        const next = Array.isArray(self.next_promise) ? self.next_promise.shift() : self.next_promise({ index: self.so_far, data: self.next_promise_data })
         self.so_far += 1
         if (next && next.then) {
           //console.log('promise ' + JSON.stringify(context))
           next.then(function(result) {
             //console.log('promise resolved')
-            self.results.push({ context, promise: next, result: result })
+            self.results[context.index] = { context, promise: next, result: result }
             startNext(self, thread)
           }).catch(function(err) {
             //console.log('promise rejected')
-            self.results.push({ context, promise: next, error: err })
+            self.results[context.index] = { context, promise: next, error: err }
             startNext(self, thread)
           })
         } else {

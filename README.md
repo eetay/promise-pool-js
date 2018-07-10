@@ -111,3 +111,10 @@ pool.then(function(result) {
   ...
 }
 ```
+
+## TODO list:
+- signature similar to Promise.all: "Promise.allWithPool([promise, ...], threads)"
+- options for behavior on reject:
+  - reject as soon as one is rejected (same as Promise.all)
+  - wait for all to resolve even if some are rejected (same as Promise.when)
+
