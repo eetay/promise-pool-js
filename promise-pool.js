@@ -3,27 +3,32 @@ function promisePool(options) {
     const self = this
     this.resolver = function(resolve, _reject) {
       self.max = max_parallel || threads
-      self.so_far = 0
-      self.incomplete = 0
+      self.started = 0
+      self.ended = 0
       self.next_promise = Array.isArray(next_promise) ? [...next_promise] : next_promise
       self.next_promise_data = next_promise_data
       self.results = []
       function startNext(self, thread) {
         const context = {
-          index: self.so_far,
+          index: self.started,
           thread,
-          data: self.next_promise_data
+          data: self.next_promise_data,
+          ended: false
         }
-        const next = Array.isArray(self.next_promise) ? self.next_promise.shift() : self.next_promise({ index: self.so_far, data: self.next_promise_data })
-        self.so_far += 1
+        const next = Array.isArray(self.next_promise) ? self.next_promise.shift() : self.next_promise({ index: self.started, data: self.next_promise_data })
+        self.started += 1
         if (next && next.then) {
           //console.log('promise ' + JSON.stringify(context))
           next.then(function(result) {
-            //console.log('promise resolved')
+            context.ended = self.ended
+            self.ended += 1
+            //console.log(`promise ${context.index} resolved`)
             self.results[context.index] = { context, promise: next, result: result }
             startNext(self, thread)
           }).catch(function(err) {
-            //console.log('promise rejected')
+            context.ended = self.ended
+            self.ended += 1
+            //console.log(`promise ${context.index} rejected`)
             self.results[context.index] = { context, promise: next, error: err }
             startNext(self, thread)
           })

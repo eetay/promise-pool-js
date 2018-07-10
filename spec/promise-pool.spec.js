@@ -24,15 +24,15 @@ function makePromise(i, timeout = 0) {
 test('Nested promise pools', (done) => {
   expect.assertions(3)
   const secondaryPromiseList = [
-    makePromise(2),
+    makePromise(2, 20),
     makePromise(3),
     makePromise(4),
     makePromise(5)
   ]
   const secondaryData = 'secondary promise pool'
   const primaryPromiseList = [
-    makePromise(0),
-    makePromise(1),
+    makePromise(0, 100),
+    makePromise(1, 10),
     promisePool({
       threads: 2,
       next_promise: secondaryPromiseList,
@@ -45,6 +45,7 @@ test('Nested promise pools', (done) => {
     next_promise_data: 'primary promise pool'
   })
   pool.then(function(result) {
+    console.log(JSON.stringify(result))
     expect(result.length).toBe(primaryPromiseList.length)
     const secondaryResult = result[2].result
     expect(secondaryResult.length).toBe(secondaryPromiseList.length)
