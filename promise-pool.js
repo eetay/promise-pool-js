@@ -17,9 +17,12 @@ function promisePool({max_parallel, next_promise, next_promise_data, threads, pr
         data: self.next_promise_data,
         ended: false
       }
-      const next = promises_generator.next ? promises_generator.next().value : (Array.isArray(self.promises_generator) ? self.promises_generator.shift() : self.promises_generator({ index: self.started, data: self.next_promise_data }))
-      self.started += 1
+      let next = null
+      if (promises_generator.next) next = promises_generator.next().value
+      else if (Array.isArray(self.promises_generator)) next = self.promises_generator.shift()
+      else next = self.promises_generator({ index: self.started, data: self.next_promise_data })
       if (next && next.then) {
+        self.started += 1
         //console.log('promise ' + JSON.stringify(context))
         next.then(function(result) {
           context.ended = self.ended

@@ -12,6 +12,7 @@ using a promise.
 npm i tiny-promise-pool
 ```
 
+
 ## Use with creator function:
 
 ```javascript
