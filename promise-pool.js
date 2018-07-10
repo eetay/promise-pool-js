@@ -4,6 +4,7 @@ function promisePool({max_parallel, next_promise, next_promise_data, threads, pr
     threads: max_parallel || threads,
     started: 0,
     ended: 0,
+    last_started: false,
     promises_generator: Array.isArray(promises_generator) ? [...promises_generator] : promises_generator,
     next_promise_data: next_promise_data || context_data,
     results: []
@@ -17,8 +18,9 @@ function promisePool({max_parallel, next_promise, next_promise_data, threads, pr
         data: self.next_promise_data,
         ended: false
       }
-      let next = null
-      if (promises_generator.next) next = promises_generator.next().value
+      let next
+      if (self.last_started) next = null
+      else if (promises_generator.next) next = promises_generator.next().value
       else if (Array.isArray(self.promises_generator)) next = self.promises_generator.shift()
       else next = self.promises_generator({ index: self.started, data: self.next_promise_data })
       if (next && next.then) {
@@ -38,6 +40,7 @@ function promisePool({max_parallel, next_promise, next_promise_data, threads, pr
           startNext(self, thread)
         })
       } else {
+        self.last_started = true
         self.live -= 1
         if (self.live <= 0) {
           resolve(self.results)
