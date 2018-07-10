@@ -113,7 +113,8 @@ pool.then(function(result) {
 ```
 
 ## TODO list:
-- signature similar to Promise.all(): "Promise.pool([promise, ...], threads)"
+- refactor to use the master promise itself as the state holder rather than a separate closure
+- API similar to Promise.all(): "Promise.pool([promise, ...], threads)"
 - options for behavior on reject:
   - reject as soon as one is rejected (same as Promise.all)
   - wait for all to resolve even if some are rejected (same as Promise.when)
