@@ -84,3 +84,30 @@ promisePool({
   ...
 })
 ```
+
+## Nested promise pools:
+
+```javascript
+const innerPool = promisePool({
+  threads: 2,
+  next_promise: [
+    makePromise(2),
+    makePromise(3),
+    makePromise(4),
+    makePromise(5)
+  ],
+  next_promise_data: 'secondary promise pool'
+})
+const pool = promisePool({
+  threads: 3,
+  next_promise: [
+    makePromise(0),
+    makePromise(1),
+    innerPool
+  ],
+  next_promise_data: 'primary promise pool'
+})
+pool.then(function(result) {
+  ...
+}
+```

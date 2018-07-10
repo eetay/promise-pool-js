@@ -21,8 +21,6 @@ function makePromise(i, timeout = 0) {
   return closure()
 }
 
-
-
 test('Nested promise pools', (done) => {
   expect.assertions(3)
   const secondaryPromiseList = [
