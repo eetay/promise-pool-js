@@ -21,14 +21,14 @@ function makePromise(i, timeout = 0) {
 function visualize(result) {
   function line(thread, id, threads) {
     var s=''
-    var x='  |'
-    for (i=0; i<threads; i++) {
+    const x='  |'
+    for (let i=0; i<threads; i++) {
       s+= ((i == thread) ? ('   '+id).slice(-x.length) : x)
     }
     return s
   }
   result.sort((x,y) => (x.context.started - y.context.started))
-  var lines = result.map((x)=>line(x.context.thread, x.context.index, max))
+  const lines = result.map((x)=>line(x.context.thread, x.context.index, max))
   console.log(lines.join('\n'))
 }
 
