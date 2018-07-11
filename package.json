@@ -4,7 +4,7 @@
   "engines": {
     "node": ">=6.4.0"
   },
-  "description": "Tiny library for performing promises in parallel while limiting the maximum number of parallel promises",
+  "description": "Tiny library for performing promises while limiting concurrency",
   "main": "promise-pool.js",
   "repository": "git@github.com:eetay/promise-pool-js.git",
   "author": "Eetay Natan <eetay.natan@samanage.com>",
