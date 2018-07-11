@@ -18,6 +18,20 @@ function makePromise(i, timeout = 0) {
   return promise
 }
 
+function visualize(result) {
+  function line(thread, id, threads) {
+    var s=''
+    var x='  |'
+    for (i=0; i<threads; i++) {
+      s+= ((i == thread) ? ('   '+id).slice(-x.length) : x)
+    }
+    return s
+  }
+  result.sort((x,y) => (x.context.started - y.context.started))
+  var lines = result.map((x)=>line(x.context.thread, x.context.index, max))
+  console.log(lines.join('\n'))
+}
+
 test('Nested promise pools', (done) => {
   expect.assertions(3)
   const secondaryPromiseList = [
