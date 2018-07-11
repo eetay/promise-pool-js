@@ -22,13 +22,13 @@ function visualize(result) {
   function line(thread, id, threads) {
     var s=''
     const x='  |'
-    for (let i=0; i<threads; i++) {
+    for (let i=0; i<threads; i+=1) {
       s+= ((i == thread) ? ('   '+id).slice(-x.length) : x)
     }
     return s
   }
   result.sort((x,y) => (x.context.started - y.context.started))
-  const lines = result.map((x)=>line(x.context.thread, x.context.index, max))
+  const lines = result.map((x)=>line(x.context.thread, x.context.index, threads))
   console.log(lines.join('\n'))
 }
 
