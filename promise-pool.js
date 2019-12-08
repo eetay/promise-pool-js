@@ -1,8 +1,10 @@
-function promisePool({max_parallel, next_promise, next_promise_data, threads, promises, context_data}) {
+function promisePool({max_parallel, next_promise, next_promise_data, threads, promises, max_rejected, context_data}) {
   var promises_generator = promises || next_promise
   var self = {
     threads: max_parallel || threads,
+    max_rejected,
     started: 0,
+    rejected: 0,
     ended: 0,
     last_started: false,
     promises_generator: Array.isArray(promises_generator) ? [...promises_generator] : promises_generator,
@@ -10,8 +12,9 @@ function promisePool({max_parallel, next_promise, next_promise_data, threads, pr
     results: []
   }
   self.live = self.threads
-  var promise = new Promise(function(resolve, _reject) {
+  var promise = new Promise(function(resolve, reject) {
     function startNext(self, thread) {
+      console.log(`${self.next_promise_data} => try next`)
       const context = {
         index: self.started,
         thread,
@@ -29,17 +32,26 @@ function promisePool({max_parallel, next_promise, next_promise_data, threads, pr
         next.then(function(result) {
           context.ended = self.ended
           self.ended += 1
-          //console.log(`promise ${context.index} resolved`)
+          console.log(`${self.next_promise_data}: promise ${context.index} resolved`)
           self.results[context.index] = { context, promise: next, result: result }
           startNext(self, thread)
         }).catch(function(err) {
           context.ended = self.ended
+          self.rejected += 1
           self.ended += 1
-          //console.log(`promise ${context.index} rejected`)
+          //console.log(`promise ${context.index} rejected; rejected ${self.rejected}/${self.max_rejected} so far; `)
           self.results[context.index] = { context, promise: next, error: err }
-          startNext(self, thread)
+          if (self.max_rejected >= 0 && (self.rejected > self.max_rejected)) {
+            //console.log('TOO MANY REJECTED')
+            self.last_started = true
+            self.live -= 1
+	    reject(self.results)
+          } else {
+            startNext(self, thread)
+          }
         })
       } else {
+        console.log(`LAST STARTED; remain: ${self.live} ${self.next_promise_data}`)
         self.last_started = true
         self.live -= 1
         if (self.live <= 0) {

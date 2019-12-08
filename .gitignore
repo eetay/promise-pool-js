@@ -2,3 +2,4 @@ node_modules
 yarn-error.log
 .idea
 spec/package.spec/package-lock.json
+coverage

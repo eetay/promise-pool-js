@@ -1,4 +1,4 @@
-jest.setTimeout(20000)
+jest.setTimeout(30000)
 var promisePool = require('../promise-pool.js')
 var visualize = require('../promise-pool-visualize.js')
 
@@ -6,12 +6,12 @@ function randomTimeout() {
   return Math.floor((Math.random() * 100) + 1)
 }
 
-function makePromise(i, timeout = 0) {
+function makePromise(i, timeout = 0, rejectValue = undefined) {
   var context = {}
-  var promise = new Promise(function (resolve, _reject) {
+  var promise = new Promise(function (resolve, reject) {
     setTimeout(() => {
       context.promise.done = true
-      resolve(i)
+      rejectValue === undefined ? resolve(i) : reject(rejectValue) 
     }, timeout)
   })
   context.promise = promise
@@ -75,16 +75,58 @@ test('Generator functions', (done) => {
 })
 
 
-test('Array of promises & order of execution', (done) => {
+test('Array of promises, some rejected', (done) => {
   expect.assertions(3)
+  const rejectValue = 'REJECTED!!!'
   const promiseList = [
-    makePromise(0,20),
-    makePromise(1,10)
+    makePromise(0, 20),
+    makePromise(1, 10, rejectValue)
   ]
   const pool = promisePool({
     threads: 3,
     next_promise: promiseList,
-    next_promise_data: 'data for context'
+  })
+  pool.then(function(result) {
+    expect(result.length).toBe(promiseList.length)
+    expect(result[1].error).toBe(rejectValue)
+    expect(result[1].context.ended).toBe(0) // first to finish
+    done()
+  })
+})
+
+test('Array of promises, rejected more than allowed', (done) => {
+  expect.assertions(2)
+  const rejectValue = 'REJECTED'
+  const promiseList = [
+    makePromise(0, 1000),
+    makePromise(1, 10, rejectValue),
+    makePromise(2, 200, rejectValue),
+    makePromise(3, 2000),
+  ]
+  const pool = promisePool({
+    threads: 2,
+    promises: promiseList,
+    max_rejected: 0,
+  })
+  pool.catch(function(result) {
+    console.log('RESULT', result)
+    expect(result.length).toBe(2)
+    expect(result[1].error).toBe(rejectValue)
+  console.log('END #22')
+    done()
+  })
+})
+
+test('Array of promises & order of execution', (done) => {
+  expect.assertions(3)
+  const promiseList = [
+    makePromise(0, 20),
+    makePromise(1, 10)
+  ]
+  const pool = promisePool({
+    threads: 3,
+    next_promise: promiseList,
+    next_promise_data: 'Array of promises & order of execution',
   })
   pool.then(function(result) {
     expect(result.length).toBe(promiseList.length)
@@ -95,18 +137,19 @@ test('Array of promises & order of execution', (done) => {
 })
 
 test('Array of promises; one is not done yet', (done) => {
+  console.log('START #20')
   expect.assertions(6)
   var resolved=false
   const promiseList = [
     makePromise(0, 100),
-    makePromise(1, 10000),
+    makePromise(1, 5000).then(x=>console.log('RESOLVED%%%%%%%%%')),
     makePromise(2, 10),
     makePromise(3, 10)
   ]
   const pool = promisePool({
     threads: 2,
-    next_promise: promiseList,
-    next_promise_data: 'data for context'
+    promises: promiseList,
+    context_data: 'Array of promises; one is not done yet'
   })
   setTimeout(()=>{
     expect(promiseList[0].done).toBe(true)
@@ -116,10 +159,14 @@ test('Array of promises; one is not done yet', (done) => {
   }, 1000)
   setTimeout(()=>{
     expect(resolved).toBe(false)
-  }, 9900)
+  }, 4900)
   pool.then(function(result) {
+    console.log('RESOLVED######', result)
     resolved=true
     expect(result.length).toBe(promiseList.length)
+    done()
+  }).catch( result => {
+    console.log('CATCH######', result)
     done()
   })
 })
