@@ -34,12 +34,12 @@
   "dependencies": {},
   "homepage": "https://github.com/eetay/promise-pool-js/blob/master/README.md",
   "devDependencies": {
-    "eslint": "4.15.0",
-    "eslint-plugin-jest": "21.17.0",
-    "eslint-plugin-react": "7.10.0",
-    "eslint-plugin-security": "1.4.0",
-    "global": "4.3.2",
-    "jest": "23.2.0"
+    "eslint": "^6.7.2",
+    "eslint-plugin-jest": "^23.1.1",
+    "eslint-plugin-react": "^7.17.0",
+    "eslint-plugin-security": "^1.4.0",
+    "global": "^4.4.0",
+    "jest": "^24.9.0"
   },
   "bugs": {
     "url": "https://github.com:eetay/promise-pool-js/issues"
