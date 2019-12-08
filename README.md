@@ -118,6 +118,20 @@ pool.then(function(result) {
 }
 ```
 
+## Debugging tool:
+
+```javascript
+var promisePool = require('../promise-pool.js')
+var visualize = require('../promise-pool-visualize.js')
+const pool = promisePool({
+  ...
+})
+pool.then(result => {
+   visualize(result) // prints to console visualization of execution
+   ...
+})
+```
+
 ## TODO list:
 - API similar to Promise.all(): "Promise.pool([promise, ...], threads)"
 - options for behavior on reject:

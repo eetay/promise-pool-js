@@ -1,5 +1,6 @@
 jest.setTimeout(20000)
 var promisePool = require('../promise-pool.js')
+var visualize = require('../promise-pool-visualize.js')
 
 function randomTimeout() {
   return Math.floor((Math.random() * 100) + 1)
@@ -16,21 +17,6 @@ function makePromise(i, timeout = 0) {
   context.promise = promise
   promise.done = false
   return promise
-}
-
-function visualize(result) {
-  function line(thread, id, threads) {
-    var s=''
-    const x='  |'
-    for (let i=0; i<threads; i+=1) {
-      s+= ((i == thread) ? ('   '+id).slice(-x.length) : x)
-    }
-    return s
-  }
-  const threads = Math.max(...result.map(x=>x.context.thread)) + 1
-  result.sort((x,y) => (x.context.index - y.context.index))
-  const lines = result.map((x)=>line(x.context.thread, x.context.index, threads))
-  console.log(lines.join('\n'))
 }
 
 test('Nested promise pools', (done) => {
@@ -151,6 +137,37 @@ test('20 promises; threads parallel 3', (done) => {
   })
   pool.then(function(result) {
     visualize(result)
+    expect(result.length).toBe(numPromises)
+    expect(result).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ context: expect.objectContaining({ index: 0, data: 17 }), result: 17 }),
+        expect.objectContaining({ context: expect.objectContaining({ index: 1, data: 17 }), result: 19 }),
+        expect.objectContaining({ context: expect.objectContaining({ index: 2, data: 17 }), result: 21 }),
+        expect.objectContaining({ context: expect.objectContaining({ index: 3, data: 17 }), result: 23 }),
+        expect.objectContaining({ context: expect.objectContaining({ index: 4, data: 17 }), result: 25 }),
+        expect.objectContaining({ context: expect.objectContaining({ index: 5, data: 17 }), result: 27 }),
+        expect.objectContaining({ context: expect.objectContaining({ index: 6, data: 17 }), result: 29 }),
+        expect.objectContaining({ context: expect.objectContaining({ index: 7, data: 17 }), result: 31 }),
+        expect.objectContaining({ context: expect.objectContaining({ index: 8, data: 17 }), result: 33 }),
+        expect.objectContaining({ context: expect.objectContaining({ index: 9, data: 17 }), result: 35 })
+      ])
+    )
+    done()
+  })
+})
+
+test('20 promises; 1 thread', (done) => {
+  expect.assertions(2)
+  const numPromises = 20
+  const pool = promisePool({
+    max_parallel: 1,
+    next_promise: function ({index, data}) {
+      if (index>=numPromises) return null
+      return makePromise((index * 2) + data, randomTimeout())
+    },
+    next_promise_data: 17
+  })
+  pool.then(function(result) {
     expect(result.length).toBe(numPromises)
     expect(result).toEqual(
       expect.arrayContaining([
