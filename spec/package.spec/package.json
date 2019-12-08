@@ -1,0 +1,14 @@
+{
+  "name": "test-npm-package",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "rm -rf ./node_modules && npm i tiny-promise-pool && node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "tiny-promise-pool": "^1.3.0"
+  }
+}

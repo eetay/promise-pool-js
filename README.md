@@ -16,7 +16,7 @@ npm i tiny-promise-pool
 ## Use with creator function:
 
 ```javascript
-var promisePool = require('promise-pool')
+var promisePool = require('tiny-promise-pool')
 
 function nextPromise({index, data}) {
   if (index>=20) return null // no more
@@ -121,8 +121,8 @@ pool.then(function(result) {
 ## Debugging tool:
 
 ```javascript
-var promisePool = require('promise-pool')
-var visualize = require('promise-pool-visualize')
+promisePool = require('tiny-promise-pool')
+visualize = require('tiny-promise-pool/promise-pool-visualize')
 const pool = promisePool({
   ...
 })
