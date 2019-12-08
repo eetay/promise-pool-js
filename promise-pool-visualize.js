@@ -8,9 +8,10 @@ function visualize(result) {
     return s
   }
   const threads = Math.max(...result.map(x=>x.context.thread)) + 1
-  result.sort((x,y) => (x.context.index - y.context.index))
-  const lines = result.map((x)=>line(x.context.thread, x.context.index, threads))
+  const sorted = [...result].sort((x,y) => (x.context.index - y.context.index))
+  const lines = sorted.map((x)=>line(x.context.thread, x.context.index, threads))
   console.log(lines.join('\n'))
+  return result
 }
 
 module.exports = visualize

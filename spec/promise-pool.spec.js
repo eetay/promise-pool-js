@@ -135,8 +135,7 @@ test('20 promises; threads parallel 3', (done) => {
     },
     next_promise_data: 17
   })
-  pool.then(function(result) {
-    visualize(result)
+  pool.then(visualize).then(function(result) {
     expect(result.length).toBe(numPromises)
     expect(result).toEqual(
       expect.arrayContaining([

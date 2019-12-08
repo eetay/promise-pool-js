@@ -121,13 +121,12 @@ pool.then(function(result) {
 ## Debugging tool:
 
 ```javascript
-var promisePool = require('../promise-pool.js')
-var visualize = require('../promise-pool-visualize.js')
+var promisePool = require('promise-pool')
+var visualize = require('promise-pool-visualize')
 const pool = promisePool({
   ...
 })
-pool.then(result => {
-   visualize(result) // prints to console visualization of execution
+pool.then(visualize).then(result => {
    ...
 })
 ```
