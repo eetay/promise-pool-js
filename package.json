@@ -1,6 +1,6 @@
 {
   "name": "tiny-promise-pool",
-  "version": "0.6.4",
+  "version": "0.7.0",
   "engines": {
     "node": ">=6.4.0"
   },
