@@ -20,9 +20,9 @@ function promisePool({max_parallel, next_promise, next_promise_data, threads, pr
       }
       let next
       if (self.last_started) next = null
-      else if (promises_generator.next) next = promises_generator.next({ index: self.started, data: self.next_promise_data }).value
+      else if (promises_generator.next) next = promises_generator.next({ index: self.started, data: self.next_promise_data, thread }).value
       else if (Array.isArray(self.promises_generator)) next = self.promises_generator.shift()
-      else next = self.promises_generator({ index: self.started, data: self.next_promise_data })
+      else next = self.promises_generator({ index: self.started, data: self.next_promise_data, thread })
       if (next && next.then) {
         self.started += 1
         //console.log('promise ' + JSON.stringify(context))
